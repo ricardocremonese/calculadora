@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Churrasco</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #4a4a4a 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(30, 30, 30, 0.9);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: rgba(40, 40, 40, 0.8);
+            padding: 1.5rem;
+            border-radius: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .hunger-meter {
+            width: 100%;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            position: relative;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        .hunger-level-indicator {
+            position: absolute;
+            left: 5%;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 50px;
+            width: 50px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+            border-radius: 25px;
+            transition: left 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .hunger-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .hunger-instruction {
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .custom-checkbox {
+            display: none;
+        }
+
+        .custom-label {
+            display: block;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: #ddd;
+        }
+
+        .custom-checkbox:checked + .custom-label {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa502 100%);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .result {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 0.5rem;
+        }
+
+        .result h2 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .result p {
+            margin: 0.5rem 0;
+            color: #ddd;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.5rem;
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            border-color: #ff6b6b;
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl text-center mb-8">🔥 Calculadora de Churrasco 🍖</h1>
+        
+        <div class="section">
+            <h2 class="section-title">👥 Quantidade de Pessoas</h2>
+            <div class="mb-4">
+                <label>Número de Adultos:</label>
+                <input type="number" id="adultos" min="0" value="0">
+            </div>
+            <div>
+                <label>Número de Crianças:</label>
+                <input type="number" id="criancas" min="0" value="0">
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🍽️ Nível de Fome</h2>
+            <div class="hunger-meter" id="hungerMeter">
+                <div class="hunger-level-indicator">🍺</div>
+            </div>
+            <div class="hunger-labels">
+                <span>Só vim para beber 🍺</span>
+                <span>Vim para comer 😊</span>
+                <span>Como até o carvão 🔥</span>
+            </div>
+            <div class="hunger-instruction">Deslize para o lado</div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🥩 Selecione as Carnes</h2>
+            <div class="option-grid">
+                <input type="checkbox" id="carne" class="custom-checkbox">
+                <label for="carne" class="custom-label">Carne 🥩</label>
+
+                <input type="checkbox" id="frango" class="custom-checkbox">
+                <label for="frango" class="custom-label">Frango 🍗</label>
+
+                <input type="checkbox" id="linguica" class="custom-checkbox">
+                <label for="linguica" class="custom-label">Linguiça 🌭</label>
+
+                <input type="checkbox" id="queijo" class="custom-checkbox">
+                <label for="queijo" class="custom-label">Queijo 🧀</label>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🍞 Selecione os Pães</h2>
+            <div class="option-grid">
+                <input type="checkbox" id="paoFrances" class="custom-checkbox">
+                <label for="paoFrances" class="custom-label">Pão Francês 🥖</label>
+
+                <input type="checkbox" id="paoAlho" class="custom-checkbox">
+                <label for="paoAlho" class="custom-label">Pão de Alho 🧄</label>
+            </div>
+        </div>
+
+        <button class="calculate-btn">Calcular</button>
+
+        <div class="result" id="resultado"></div>
+    </div>
+
+    <script>
+        const hungerMeter = document.getElementById('hungerMeter');
+        const indicator = hungerMeter.querySelector('.hunger-level-indicator');
+        let hungerLevel = 1;
+        const emojis = ['🍺', '😋', '🔥'];
+
+        hungerMeter.addEventListener('click', (e) => {
+            const rect = hungerMeter.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+            
+            if (x < width/3) {
+                hungerLevel = 1;
+                indicator.style.left = '5%';
+            } else if (x < (width*2)/3) {
+                hungerLevel = 2;
+                indicator.style.left = 'calc(50% - 25px)';
+            } else {
+                hungerLevel = 3;
+                indicator.style.left = 'calc(100% - 55px)';
+            }
+            
+            indicator.textContent = emojis[hungerLevel-1];
+        });
+
+        document.querySelector('.calculate-btn').addEventListener('click', () => {
+            const adultos = parseInt(document.getElementById('adultos').value) || 0;
+            const criancas = parseInt(document.getElementById('criancas').value) || 0;
+            
+            const carnesSelect = {
+                carne: document.getElementById('carne').checked,
+                frango: document.getElementById('frango').checked,
+                linguica: document.getElementById('linguica').checked,
+                queijo: document.getElementById('queijo').checked
+            };
+
+            const paesSelect = {
+                paoFrances: document.getElementById('paoFrances').checked,
+                paoAlho: document.getElementById('paoAlho').checked
+            };
+
+            const baseCalc = {
+                1: { carne: 300, frango: 150, linguica: 150, queijo: 100 },
+                2: { carne: 400, frango: 200, linguica: 200, queijo: 150 },
+                3: { carne: 500, frango: 250, linguica: 300, queijo: 200 }
+            };
+
+            let resultado = '<h2>📊 Resultado do Cálculo</h2>';
+            let totalCarnes = 0;
+            
+            resultado += '<div style="margin-top: 1rem;"><strong>🥩 Carnes:</strong></div>';
+            for (let tipo in carnesSelect) {
+                if (carnesSelect[tipo]) {
+                    const qtdAdultos = baseCalc[hungerLevel][tipo] * adultos;
+                    const qtdCriancas = (baseCalc[hungerLevel][tipo] * 0.5) * criancas;
+                    const total = (qtdAdultos + qtdCriancas) / 1000;
+                    
+                    if (tipo !== 'queijo') {
+                        totalCarnes += total;
+                    }
+                    
+                    const emoji = tipo === 'carne' ? '🥩' : 
+                                tipo === 'frango' ? '🍗' : 
+                                tipo === 'linguica' ? '🌭' : '🧀';
+                    
+                    resultado += `<p>${emoji} ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}: ${total.toFixed(2)} kg</p>`;
+                }
+            }
+
+            resultado += '<div style="margin-top: 1rem;"><strong>🍞 Pães:</strong></div>';
+            if (paesSelect.paoFrances) {
+                const qtdPaoFrances = (adultos * 2) + criancas;
+                resultado += `<p>🥖 Pão Francês: ${qtdPaoFrances} unidades</p>`;
+            }
+            if (paesSelect.paoAlho) {
+                const qtdPaoAlho = Math.ceil((adultos + criancas) / 2);
+                resultado += `<p>🧄 Pão de Alho: ${qtdPaoAlho} unidades</p>`;
+            }
+
+            resultado += '<div style="margin-top: 1rem;"><strong>🍺 Bebidas:</strong></div>';
+            const totalPessoas = adultos + criancas;
+            const latas350 = Math.ceil(adultos * (hungerLevel === 1 ? 6 : hungerLevel === 2 ? 4 : 3));
+            const caixas = Math.ceil(latas350 / 12);
+            resultado += `<p>🍺 Cerveja: ${caixas} caixa(s) com 12 latas de 350ml (${latas350} latas)</p>`;
+            resultado += `<p>🥤 Refrigerante: ${((adultos * 500 + criancas * 300) / 1000).toFixed(2)} litros</p>`;
+            resultado += `<p>🧃 Suco: ${((adultos * 300 + criancas * 500) / 1000).toFixed(2)} litros</p>`;
+
+            resultado += '<div style="margin-top: 1rem;"><strong>🔥 Carvão Necessário:</strong></div>';
+            const pessoasPorSaco = 10;
+            const totalPessoasArredondado = Math.ceil(totalPessoas / pessoasPorSaco) * pessoasPorSaco;
+            const sacos8kg = Math.floor(totalPessoasArredondado / pessoasPorSaco);
+            
+            if (totalPessoas <= 10) {
+                resultado += `<p>🔥 Recomendado: 1 saco de 4kg</p>`;
+            } else if (totalPessoas <= 20) {
+                resultado += `<p>🔥 Recomendado: 1 saco de 8kg</p>`;
+            } else {
+                resultado += `<p>🔥 Recomendado: ${sacos8kg} saco(s) de 8kg</p>`;
+            }
+
+            resultado += `<div style="margin-top: 1rem;"><strong>📈 Total de Carnes: ${totalCarnes.toFixed(2)} kg</strong></div>`;
+
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = resultado;
+            resultadoDiv.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
